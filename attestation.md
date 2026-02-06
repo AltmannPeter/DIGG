@@ -1,6 +1,6 @@
 # An EUDIW Attestation
 
-This text details an EUDIW PID attestation in one of the two core formats, SD-JWT VC.
+This text details an EUDIW PID attestation in one of the two core formats, SD-JWT VC, and the technical requirements for its issuance using OpenID for Verifiable Credential Issuance (OID4VCI).
 
 ## Attestation Requirements
 
@@ -68,11 +68,11 @@ The SD-JWT payload:
 }
 ```
 
-Where possible, IANA claims MUST be followed.  Additional ones to explain are:
+Where possible, IANA claims MUST be followed. Additional ones to explain are:
 
-- `vct`: a string that acts as a unique identifier or schema for the credential. It is expected that ecosystems using SD-JWT VCs define such values including the semantics of the respective claims and associated rules.
-- `_sd`: array of digests that represent hidden disclosable attributes.
--  `_sd_alg`: the algorithm used to compute the digest.
+- `vct`: A string that acts as a unique identifier or schema for the credential. It defines the semantics of the respective claims and associated rules.
+- `_sd`: An array of digests that represent individual attributes hidden until selectively disclosed by the user.
+- `_sd_alg`: The cryptographic hash algorithm (e.g., SHA-256) used to compute the attribute digests.
 
 ### Catalogues and Rulebooks
 
@@ -92,3 +92,19 @@ In sum:
 - The Catalogue is the directory where users find available attestations.
 - The Rulebook is the manual (documentation) describing the rules of a specific attestation.
 - The Scheme (machine-readable) is the code/specification software uses to process the attestation
+
+### IT Planning for Attestation Support
+
+1. Semantic Mapping and Data Governance: Internal data must be translated into the exact structures required by the European Commission. This entails:
+   - Schema: Map internal fields to the precise claim paths defined in the Attestation Schema
+   - Attribute Registry: Ensure all mandatory attributes required by Annex VI of Regulation (EU) No 910/2014 are retrieved from "Authentic Sources".
+   - Vocabulary Definition: For private claims, define and host documentation (the Rulebook) explaining the semantics and data types so Verifiers can interpret the information correctly.
+2. Support for Selective Disclosure: Identify which claims should be individually disclosable. Those that are disclosable need then to be prepared as per the IETF SD-JWT specification.
+3. Lifecycle Management & Revocation: An attestation is a living document that must accurately reflect the current status of the holder. This means:
+- If supporting long-lived tokens: develop automated triggers that update the Token Status List (TSL) as soon as an internal status changes (e.g., a professional license is revoked or an ID is reported stolen).
+- Manage the private keys used for signing specific attestation types within a Hardware Security Module (HSM), ensuring they are distinct from keys used for other corporate functions.
+- Update catalogues and rulebooks when required.
+
+To support high-assurance issuance, an issuer must support the OID4VCI HAIP profile. Beyond the OAuth 2.0 support required for HAIP, there is a need to setup the attestation service endpoint that the user can use to request an attestation. This include data mapping, session logic, signing logic etc. The issuer also needs to authenticate the user to know that the issued attestation is bound to the identity subject it describes. The specific authentication process depends on whether this is done with an EUDIW PID, or using another means. Using other means to establish the user identity is out of scope for this text. If the user authenticates with a PID, the issuer needs to validate both the EUDIW using a WUA and a WIA (essentially a key attestation and a software attestation).
+
+The issuer also needs to do metadata management. Hosting the `.well-known/openid-credential-issuer` endpoint to declare technical capabilities and display information.
