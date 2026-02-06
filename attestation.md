@@ -101,9 +101,9 @@ In sum:
    - Vocabulary Definition: For private claims, define and host documentation (the Rulebook) explaining the semantics and data types so Verifiers can interpret the information correctly.
 2. Support for Selective Disclosure: Identify which claims should be individually disclosable. Those that are disclosable need then to be prepared as per the IETF SD-JWT specification.
 3. Lifecycle Management & Revocation: An attestation is a living document that must accurately reflect the current status of the holder. This means:
-- If supporting long-lived tokens: develop automated triggers that update the Token Status List (TSL) as soon as an internal status changes (e.g., a professional license is revoked or an ID is reported stolen).
-- Manage the private keys used for signing specific attestation types within a Hardware Security Module (HSM), ensuring they are distinct from keys used for other corporate functions.
-- Update catalogues and rulebooks when required.
+   - If supporting long-lived tokens: develop automated triggers that update the Token Status List (TSL) as soon as an internal status changes (e.g., a professional license is revoked or an ID is reported stolen).
+   - Manage the private keys used for signing specific attestation types within a Hardware Security Module (HSM), ensuring they are distinct from keys used for other corporate functions.
+   - Update catalogues and rulebooks when required.
 
 To support high-assurance issuance, an issuer must support the OID4VCI HAIP profile. Beyond the OAuth 2.0 support required for HAIP, there is a need to setup the attestation service endpoint that the user can use to request an attestation. This include data mapping, session logic, signing logic etc. The issuer also needs to authenticate the user to know that the issued attestation is bound to the identity subject it describes. The specific authentication process depends on whether this is done with an EUDIW PID, or using another means. Using other means to establish the user identity is out of scope for this text. If the user authenticates with a PID, the issuer needs to validate both the EUDIW using a WUA and a WIA (essentially a key attestation and a software attestation).
 
